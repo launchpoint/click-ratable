@@ -1,0 +1,5 @@
+.ratable
+  .yesno
+    %input{:type=>'hidden', :name=>"rating", :value=>0, :id=>"rating_$rt->id"}
+    %input{:type=>'submit', :onclick=>"$('rating_$rt->id').val(1);", :value=>'I Like It'}
+    %input{:type=>'submit', :onclick=>"$('rating_$rt->id').val(0);", :value=>'Change Something'}

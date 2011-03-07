@@ -1,0 +1,72 @@
+.ratable
+  .upvote
+    %div{:class=>'icon ui-state-default ui-corner-all', :id=>'rating_up_'.$rt->id}
+      %span{:class=>'ui-icon ui-icon-triangle-1-n'}
+  .score{:id=>'rating_score_'.$rt->id}
+    +$rt->vote_count
+  .downvote
+    %div{:class=>'icon ui-state-default ui-corner-all', :id=>'rating_down_'.$rt->id}
+      %span{:class=>'ui-icon ui-icon-triangle-1-s'}
+:js
+  $(document).ready( function() {
+    e = $('#rating_up_<?=$rt->id?>');
+    <? if ($rt->rating_for($current_user)->value > 0): ?>
+    e.addClass('ui-state-highlight');
+    <? endif; ?>
+    e.click( function() {
+  		if ($(this).hasClass("ui-state-highlight"))
+  		{
+    		$('#rating_score_<?=$rt->id?>').dec();
+    		$(this).removeClass('ui-state-highlight');
+    		$.get('<?=clear_rating_url($rt)?>');
+      } else {
+    		$('#rating_score_<?=$rt->id?>').inc();
+    		$(this).addClass('ui-state-highlight');
+    		$.get('<?=save_rating_url($rt)?>?rating=1');
+      }
+  		d = $('#rating_down_<?=$rt->id?>');
+  		if (d.hasClass('ui-state-highlight'))
+  		{
+  		  d.removeClass("ui-state-highlight"); 
+  		  $('#rating_score_<?=$rt->id?>').inc();
+      }
+    });
+    e.hover(
+    	function(){ 
+    		$(this).addClass("ui-state-hover"); 
+    	},
+    	function(){ 
+    		$(this).removeClass("ui-state-hover"); 
+    	}
+    );        
+    e = $('#rating_down_<?=$rt->id?>');
+    <? if ($rt->rating_for($current_user)->value === 0): ?>
+    e.addClass('ui-state-highlight');
+    <? endif; ?>
+    e.click( function() {
+  		if ($(this).hasClass("ui-state-highlight"))
+  		{
+    		$('#rating_score_<?=$rt->id?>').inc();
+    		$(this).removeClass('ui-state-highlight');
+    		$.get('<?=clear_rating_url($rt)?>');
+      } else {
+    		$('#rating_score_<?=$rt->id?>').dec();
+    		$(this).addClass('ui-state-highlight');
+    		$.get('<?=save_rating_url($rt)?>?rating=0');
+      }
+  		d = $('#rating_up_<?=$rt->id?>');
+  		if (d.hasClass('ui-state-highlight'))
+  		{
+  		  d.removeClass("ui-state-highlight"); 
+  		  $('#rating_score_<?=$rt->id?>').dec();
+      }
+    });
+    e.hover(
+    	function(){ 
+    		$(this).addClass("ui-state-hover"); 
+    	},
+    	function(){ 
+    		$(this).removeClass("ui-state-hover"); 
+    	}
+    );        
+  });

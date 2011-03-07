@@ -1,0 +1,34 @@
+.ratable
+  .upvote
+    %div{:id=>'rating_up_'.$rt->id, :style=>"cursor:pointer;"}
+      -if($rt->rating_for($current_user)->value == 0)
+        =se("Report Abuse")
+      -else
+        =se("Abuse Reported")
+:js
+  $(document).ready( function() {
+    e = $('#rating_up_<?=$rt->id?>');
+    <? if ($rt->rating_for($current_user)->value > 0): ?>
+    e.addClass('ui-state-highlight');
+    <? endif; ?>
+    e.click( function() {
+  		if (!$(this).hasClass("ui-state-highlight"))
+  		{
+    		$(this).addClass('ui-state-highlight');
+    		$(this).html('<?=j(se("Abuse Reported"))?>');
+    		$.get('<?=save_rating_url($rt)?>?rating=1');
+      } else {
+    		$(this).removeClass('ui-state-highlight');
+    		$(this).html('<?=j(se("Report Abuse"))?>');
+    		$.get('<?=save_rating_url($rt)?>?rating=0');
+      }
+    });
+    e.hover(
+    	function(){ 
+    		$(this).addClass("ui-state-hover"); 
+    	},
+    	function(){ 
+    		$(this).removeClass("ui-state-hover"); 
+    	}
+    );        
+  });

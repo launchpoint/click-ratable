@@ -1,0 +1,29 @@
+.ratable{:id=>"rateable_".$rt->object_type."_".$rt->object_id}
+  %form{:action=>save_rating_url($rt), :id=>'rateable_form_'.$rt->id}
+    %fieldset
+      -for($i=1;$i<=$max_score;$i++)
+        -if($rt->rating_for($current_user)->value==$i)
+          %input{:name=>"rating",:type=>"radio", :value=>$i, :checked=>'checked'}
+        -else
+          %input{:name=>"rating",:type=>"radio", :value=>$i}
+  .text
+    =se("Average user rating: ")
+    +$rt->score
+  :js
+    $(document).ready( function()
+    {
+      e = $('#rateable_form_<?=$rt->id?>');
+      e.ajaxForm();
+      $('#rateable_form_<?=$rt->id?> > fieldset > input').rating(
+        {
+          callback: function(value, link){
+            if(value>=1 && value<=<?=$max_score?>)
+            {
+              $('#rateable_form_<?=$rt->id?>').submit();
+            } else {
+              $.get('<?=clear_rating_url($rt)?>');
+            }
+          }
+        }
+      );
+    });
